@@ -25,7 +25,7 @@ import java.util.Queue;
  */
 public class ModuleIOSparkMax implements ModuleIO {
   // Gear ratios for SDS MK4i L2, adjust as necessary
-  private static final double DRIVE_GEAR_RATIO =  (6.75 / 1.0);
+  private static final double DRIVE_GEAR_RATIO = (6.75 / 1.0);
   private static final double TURN_GEAR_RATIO = (12.8 / 1.0);
 
   private final CANSparkMax driveSparkMax;
@@ -67,7 +67,7 @@ public class ModuleIOSparkMax implements ModuleIO {
         driveSparkMax = new CANSparkMax(7, MotorType.kBrushless);
         turnSparkMax = new CANSparkMax(8, MotorType.kBrushless);
         turnAbsoluteEncoder = new CANcoder(9);
-        absoluteEncoderOffset = new Rotation2d(0.); // MUST BE CALIBRATED
+        absoluteEncoderOffset = new Rotation2d(0); // MUST BE CALIBRATED
         break;
       default:
         throw new RuntimeException("Invalid module index");
@@ -144,6 +144,7 @@ public class ModuleIOSparkMax implements ModuleIO {
     inputs.turnAbsolutePosition =
         new Rotation2d(turnAbsoluteEncoder.getAbsolutePosition().getValueAsDouble() * 2.0 * Math.PI)
             .minus(absoluteEncoderOffset);
+
     inputs.turnPosition =
         Rotation2d.fromRotations(turnRelativeEncoder.getPosition() / TURN_GEAR_RATIO);
     inputs.turnVelocityRadPerSec =
@@ -162,6 +163,7 @@ public class ModuleIOSparkMax implements ModuleIO {
         turnPositionQueue.stream()
             .map((Double value) -> Rotation2d.fromRotations(value / TURN_GEAR_RATIO))
             .toArray(Rotation2d[]::new);
+
     timestampQueue.clear();
     drivePositionQueue.clear();
     turnPositionQueue.clear();
